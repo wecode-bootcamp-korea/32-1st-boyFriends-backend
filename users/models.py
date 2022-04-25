@@ -2,7 +2,7 @@ from django.db   import models
 from core.models import TimeStampModel
 # Create your models here.                                                       
 
-class Users(TimeStampModel):
+class User(TimeStampModel):
     class Gender(models.IntegerChoices):
         male = 1
         female = 2

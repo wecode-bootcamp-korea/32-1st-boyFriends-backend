@@ -1,35 +1,34 @@
-from tkinter import CASCADE
 from django.db import models
 from core.models import TimeStampModel
 
 # Create your models here.
 class Product(TimeStampModel):
     name = models.CharField(max_length=50)
-    price = models.IntegerField(max_length=10)
-    sale = models.IntegerField(max_length=3)
-    review = models.ManyToManyField("users.User", through='Review', related_name='product_review')
-    payment = models.ManyToManyField("users.User", through='Payment', related_name='product_payment')
+    price = models.IntegerField()
+    sale = models.IntegerField()
+    reviews = models.ManyToManyField("users.User", through='Review', related_name='product_reviews')
+    payments = models.ManyToManyField("users.User", through='payments.Payment', related_name='product_payments')
 
     class Meta:
         db_table = "products"
 
 class Image(TimeStampModel):
     image_urls = models.URLField(max_length=2000)
-    product = models.ForeignKey("Product", on_delete=CASCADE)
+    product = models.ForeignKey("Product", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "images"
 
 class Thumbnail(TimeStampModel):
     image_urls = models.URLField(max_length=2000)
-    product = models.ForeignKey("Product", on_delete=CASCADE)
+    product = models.ForeignKey("Product", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "thumbnails"
     
 class Description(TimeStampModel):
     descriptions = models.CharField(max_length=200)
-    product = models.ForeignKey("Product", on_delete=CASCADE)
+    product = models.ForeignKey("Product", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "descriptions"
@@ -50,17 +49,17 @@ class Category(TimeStampModel):
 
     index = models.IntegerField(db_index=True, choices=Index.choices) 
     sub_index = models.IntegerField(choices=SubIndex.choices) 
-    product = models.ForeignKey("Product", on_delete=CASCADE)
+    product = models.ForeignKey("Product", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "categories"
 
 # manytomany
 class Review(TimeStampModel):
-    stars = models.IntegerField(max_length=1)
+    stars = models.IntegerField()
     comment = models.CharField(max_length=200)
-    user = models.ForeignKey("User", on_delete=CASCADE)
-    product = models.ForeignKey("Product", on_delete=CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    product = models.ForeignKey("Product", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "reviews"
@@ -72,8 +71,8 @@ class SizeStock(TimeStampModel):
         large = 3
 
     size = models.IntegerField(choices=Size.choices)
-    stock = models.IntegerField(max_length=1000)
-    product = models.ForeignKey("Product", on_delete=CASCADE)
+    stock = models.IntegerField()
+    product = models.ForeignKey("Product", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "sizes"

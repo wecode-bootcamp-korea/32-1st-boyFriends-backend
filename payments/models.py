@@ -1,4 +1,3 @@
-from tkinter import CASCADE
 from django.db import models
 from core.models import TimeStampModel
 
@@ -6,8 +5,8 @@ from core.models import TimeStampModel
 
 # manytomany
 class Payment(TimeStampModel):
-    user = models.ForeignKey("User", on_delete=CASCADE)
-    product = models.ForeignKey("Product", on_delete=CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    product = models.ForeignKey("products.Product", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "payments"
