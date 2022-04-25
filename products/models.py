@@ -6,8 +6,8 @@ class Product(TimeStampModel):
     name = models.CharField(max_length=50)
     price = models.IntegerField()
     sale = models.IntegerField()
-    reviews = models.ManyToManyField("users.User", through='Review', related_name='product_reviews')
-    payments = models.ManyToManyField("users.User", through='payments.Payment', related_name='product_payments')
+    # reviews = models.ManyToManyField("users.User", through='Review', related_name='product_reviews')
+    # payments = models.ManyToManyField("users.User", through='payments.Payment', related_name='product_payments')
 
     class Meta:
         db_table = "products"
