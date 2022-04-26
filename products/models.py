@@ -41,8 +41,8 @@ class Category(models.Model):
 class Review(TimeStampModel):
     stars   = models.PositiveIntegerField()
     comment = models.CharField(max_length=200)
-    user    = models.ForeignKey("users.User", on_delete=models.CASCADE)
-    product = models.ForeignKey("Product", on_delete=models.CASCADE)
+    user    = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)
+    product = models.ForeignKey("Product", on_delete=models.DO_NOTHING)
 
     class Meta:
         db_table = "reviews"
@@ -61,7 +61,7 @@ class Stock(models.Model):
         db_table = "stocks"        
 
 class SizeStock(TimeStampModel):
-    size    = models.ForeignKey("Size", on_delete=models.CASCADE)
+    size    = models.ForeignKey("Size", on_delete=models.PROTECT)
     stock   = models.ForeignKey("Stock", on_delete=models.CASCADE)
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
 
