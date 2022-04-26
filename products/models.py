@@ -33,13 +33,13 @@ class MainCategory(models.Model):
 
 class Category(models.Model):
     sub           = models.CharField(max_length=10)
-    main_category    = models.ForeignKey("MainCategory", on_delete=models.CASCADE)
+    main_category = models.ForeignKey("MainCategory", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "categories"
 
 class Review(TimeStampModel):
-    stars   = models.IntegerField()
+    stars   = models.PositiveIntegerField()
     comment = models.CharField(max_length=200)
     user    = models.ForeignKey("users.User", on_delete=models.CASCADE)
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
@@ -55,7 +55,7 @@ class Size(models.Model):
         db_table = "sizes"
 
 class Stock(models.Model):
-    stock = models.IntegerField()
+    stock = models.PositiveIntegerField()
 
     class Meta:
         db_table = "stocks"        
