@@ -1,14 +1,12 @@
 from django.db import models
 from core.models import TimeStampModel
 
-# Create your models here.
 class Product(TimeStampModel):
     name = models.CharField(max_length=50)
     price = models.IntegerField()
     sale = models.IntegerField()
-    # reviews = models.ManyToManyField("users.User", through='Review', related_name='product_reviews')
-    # payments = models.ManyToManyField("users.User", through='payments.Payment', related_name='product_payments')
-
+    category = models.ForeignKey("Category", on_delete=models.CASCADE)
+    
     class Meta:
         db_table = "products"
 
@@ -34,12 +32,12 @@ class Description(TimeStampModel):
         db_table = "descriptions"
 
 class Category(TimeStampModel):
-    class Index(models.IntegerChoices):
+    class Main(models.IntegerChoices):
         toy = 1
         apparel = 2
         digital = 3
 
-    class SubIndex(models.IntegerChoices):
+    class Sub(models.IntegerChoices):
         big_toy = 1
         small_toy = 2
         short_sleeve = 3
@@ -47,14 +45,12 @@ class Category(TimeStampModel):
         phone_case = 5
         small_appliance = 6
 
-    index = models.IntegerField(db_index=True, choices=Index.choices) 
-    sub_index = models.IntegerField(choices=SubIndex.choices) 
-    product = models.ForeignKey("Product", on_delete=models.CASCADE)
+    main = models.IntegerField(choices=Main.choices) 
+    sub = models.IntegerField(choices=Sub.choices) 
 
     class Meta:
         db_table = "categories"
 
-# manytomany
 class Review(TimeStampModel):
     stars = models.IntegerField()
     comment = models.CharField(max_length=200)
