@@ -3,12 +3,19 @@ from core.models import TimeStampModel
 
 class Product(TimeStampModel):
     name     = models.CharField(max_length=50)
-    price    = models.IntegerField()
-    sale     = models.IntegerField()
+    price    = models.PositiveIntegerField()
+    sale     = models.PositiveIntegerField(null=True)
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
+    caution  = models.ForeignKey("Caution", on_delete=models.SET_NULL, null=True)
     
     class Meta:
         db_table = "products"
+
+class Caution(models.Model):
+    description = models.CharField(max_length=500)
+
+    class Meta:
+        db_table = "cautions"
 
 class Image(models.Model):
     image_urls = models.URLField(max_length=2000)
