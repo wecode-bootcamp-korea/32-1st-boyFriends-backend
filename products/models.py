@@ -2,14 +2,21 @@ from django.db   import models
 from core.models import TimeStampModel
 
 class Product(TimeStampModel):
-    name     = models.CharField(max_length=50)
-    price    = models.PositiveIntegerField()
-    sale     = models.PositiveIntegerField(null=True)
-    category = models.ForeignKey("Category", on_delete=models.CASCADE)
-    caution  = models.ForeignKey("Caution", on_delete=models.SET_NULL, null=True)
+    name           = models.CharField(max_length=50)
+    price          = models.PositiveIntegerField()
+    discount       = models.PositiveIntegerField(null=True)
+    category       = models.ForeignKey("Category", on_delete=models.CASCADE)
+    caution        = models.ForeignKey("Caution", on_delete=models.SET_NULL, null=True)
+    product_status = models.ForeignKey("ProductStatus", on_delete=models.SET_NULL, null=True)
     
     class Meta:
         db_table = "products"
+
+class ProductStatus(models.Model):
+    status = models.CharField(max_length=10)
+
+    class Meta:
+        db_table = "product_statuses"
 
 class Caution(models.Model):
     description = models.CharField(max_length=500)
@@ -46,10 +53,10 @@ class Category(models.Model):
         db_table = "categories"
 
 class Review(TimeStampModel):
-    stars   = models.PositiveIntegerField()
+    rating   = models.PositiveIntegerField()
     comment = models.CharField(max_length=200)
-    user    = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)
-    product = models.ForeignKey("Product", on_delete=models.DO_NOTHING)
+    user    = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    product = models.ForeignKey("Product", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "reviews"
@@ -68,7 +75,7 @@ class Stock(models.Model):
         db_table = "stocks"        
 
 class SizeStock(TimeStampModel):
-    size    = models.ForeignKey("Size", on_delete=models.PROTECT)
+    size    = models.ForeignKey("Size", on_delete=models.PROTECT, null=True)
     stock   = models.ForeignKey("Stock", on_delete=models.CASCADE)
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
 

@@ -12,8 +12,8 @@ class Cart(TimeStampModel):
         db_table = "carts"
 
 class Order(TimeStampModel):
-    id           = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) # order_number
-    user         = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)
+    order_number = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user         = models.ForeignKey("users.User", on_delete=models.CASCADE)
     order_status = models.ForeignKey("OrderStatus", on_delete=models.SET_NULL, null=True)
 
     class Meta:
@@ -27,8 +27,8 @@ class OrderStatus(models.Model):
 
 class OrderItem(TimeStampModel):
     count             = models.PositiveIntegerField()
-    order             = models.ForeignKey("Order", on_delete=models.SET_NULL, null=True)
-    product           = models.ForeignKey("products.Product", on_delete=models.DO_NOTHING)
+    order             = models.ForeignKey("Order", on_delete=models.CASCADE)
+    product           = models.ForeignKey("products.Product", on_delete=models.CASCADE)
     order_item_status = models.ForeignKey("OrderItemStatus", on_delete=models.SET_NULL, null=True)
     order_shipment    = models.ForeignKey("OrderShipment", on_delete=models.SET_NULL, null=True)
 
