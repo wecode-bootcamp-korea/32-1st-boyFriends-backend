@@ -1,3 +1,4 @@
+from tkinter import CASCADE
 import uuid
 
 from django.db   import models
@@ -42,8 +43,14 @@ class OrderItemStatus(models.Model):
         db_table = "order_item_statuses"
 
 class OrderShipment(TimeStampModel):
-    tracking_number = models.CharField(max_length=50, unique=True)
-    company         = models.CharField(max_length=20)
+    tracking_number  = models.CharField(max_length=50, unique=True)
+    delivery_company = models.ForeignKey("DeliveryCompany", on_delete=models.CASCADE)
     
     class Meta:
         db_table = "order_shipments"
+
+class DeliveryCompany(TimeStampModel):
+    company = models.CharField(max_length=20)
+
+    class Meta:
+        db_table = "delivery_companies"
