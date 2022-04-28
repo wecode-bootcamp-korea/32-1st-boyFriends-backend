@@ -28,7 +28,7 @@ class Image(models.Model):
     image_urls = models.URLField(max_length=2000)
     product    = models.ForeignKey("Product", on_delete=models.CASCADE)
     image_type = models.ForeignKey("ImageType", on_delete=models.CASCADE)
-    review     = models.ForeignKey("Review", on_delete=models.CASCADE)
+    review     = models.ForeignKey("Review", on_delete=models.CASCADE ,null=True)
 
     class Meta:
         db_table = "images"
