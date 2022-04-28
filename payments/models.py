@@ -44,13 +44,13 @@ class OrderItemStatus(models.Model):
 
 class OrderShipment(TimeStampModel):
     tracking_number  = models.CharField(max_length=50, unique=True)
-    delivery_company = models.ForeignKey("DeliveryCompany", on_delete=models.CASCADE)
+    carrier          = models.ForeignKey("Carrier", on_delete=models.CASCADE)
     
     class Meta:
         db_table = "order_shipments"
 
-class DeliveryCompany(TimeStampModel):
-    company = models.CharField(max_length=20)
+class Carrier(TimeStampModel):
+    carriers = models.CharField(max_length=20)
 
     class Meta:
-        db_table = "delivery_companies"
+        db_table = "carriers"
