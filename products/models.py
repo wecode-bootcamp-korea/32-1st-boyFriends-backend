@@ -62,7 +62,7 @@ class Review(TimeStampModel):
         db_table = "reviews"
 
 class Size(models.Model):
-    size    = models.CharField(max_length=5)
+    size    = models.CharField(max_length=10)
     product = models.ManyToManyField("Stock", through="SizeStock")
 
     class Meta:
