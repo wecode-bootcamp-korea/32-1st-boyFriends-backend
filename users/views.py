@@ -16,10 +16,10 @@ class SignUpView(View):
             email         = data['email']
             password      = data['password']
             name          = data['name']
-            address       = data['address']
-            phone_number  = data['phone_number']
-            gender        = data['gender']
-            age           = data['age']
+            address       = data.get('address', None)
+            phone_number  = data.get('phone_number', None)
+            gender        = data.get('gender', None)
+            age           = data.get('age', None)
 
             if User.objects.filter(email=email).exists():
                 return JsonResponse({"message" : "EMAIL_ALREADY_EXISTS"}, status=409)
@@ -44,5 +44,8 @@ class SignUpView(View):
         except KeyError:
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "DECODE_ERROR"}, status=400)
+
         except ValidationError as error:
-            return JsonResponse({"message": error.message}, status=400)
+            return JsonResponse({"message": error.message}, status=error.code)
