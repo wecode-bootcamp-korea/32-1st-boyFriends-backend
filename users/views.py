@@ -4,6 +4,7 @@ import bcrypt, jwt
 from django.http            import JsonResponse
 from django.views           import View
 from django.core.exceptions import ValidationError
+from datetime               import datetime, timedelta
 
 from users.models       import User
 from users.validation   import validate_email, validate_password
@@ -61,7 +62,7 @@ class SignInView(View):
 
             user     = User.objects.get(email = email)
 
-            access_token = jwt.encode({'id':user.id},SECRET_KEY,algorithm=ALGORITHM)
+            access_token = jwt.encode({'id':user.id, 'exp': datetime.utcnow()+timedelta(days=1)},SECRET_KEY,algorithm=ALGORITHM)
 
             if bcrypt.checkpw(password.encode('utf-8'),user.password.encode('utf-8')):
                 return JsonResponse({'messasge':'SUCCESS','ACCESS_TOKEN':access_token}, status=200)
