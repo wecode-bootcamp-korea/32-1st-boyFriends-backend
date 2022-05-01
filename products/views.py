@@ -28,7 +28,6 @@ class ProductDetailView(View):
                         "category": product.category.main_category.main
                     } for size_stock in size_stocks
                 ],
-                "단품"   : "null",
                 "sale"  : product.discount,
                 "review": [
                     {
