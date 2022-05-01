@@ -8,7 +8,7 @@ def login_decorator(func) :
     def wrapper(self, request, *args, **kwrags) :
         try :
             token = request.headers.get('Authorization', None)
-            payload = jwt.decode(token, settings.SECRET_KEY, settings.ALGORITMS)
+            payload = jwt.decode(token, settings.SECRET_KEY, settings.ALGORITHM)
             request.user = User.objects.get(email=payload['email'])
 
         except User.DoesNotExist:
