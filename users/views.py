@@ -59,18 +59,20 @@ class SignInView(View):
         try:
             email    = data['email']
             password = data['password']
-
             user     = User.objects.get(email = email)
 
-            access_token = jwt.encode({'id':user.id, 'exp': datetime.utcnow()+timedelta(days=1)},SECRET_KEY,algorithm=ALGORITHM)
+            payload = {
+                'id' : user.id,
+                'exp': datetime.utcnow()+timedelta(days=1)
+            }
+            access_token = jwt.encode(payload,SECRET_KEY,algorithm=ALGORITHM)
 
             if bcrypt.checkpw(password.encode('utf-8'),user.password.encode('utf-8')):
                 return JsonResponse({'message':'SUCCESS','ACCESS_TOKEN':access_token}, status=200)
-            return JsonResponse({"message":"INCORRECT_PASSWORD"},status=401)
+            return JsonResponse({"message":"INVALID_USER"},status=401)
 
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"},status=400)
             
         except User.DoesNotExist:
-            return JsonResponse({"message":"NOT_REGISTERED_EMAIL"},status=401)
-                
+            return JsonResponse({"message":"INVALID_USER"},status=401)
