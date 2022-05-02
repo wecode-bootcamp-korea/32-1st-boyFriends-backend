@@ -16,34 +16,41 @@ class CartView(View):
         user_id    = request.user
         product_id = data["product_id"]
         count      = data["count"]
-        check_box  = data["isChecked"]
 
-        cart, created  = Cart.objects.get_or_creat(
+        Cart.objects.create(
             user_id    = user_id,
             product_id = product_id,
-            count      = count,
-            check_box  = check_box
+            count      = count
         )
-        if not created:
-            cart.save()
-        return JsonResponse({"results": results}, status=201)
+        return JsonResponse({"message": "CART_CREATED"}, status=201)
 
     @login_decorator
     def get(self, request):
-        carts      = Cart.object.filter(user_id=request.user)
-        sizestocks = cart.product.sizestock_set.filter(product_id=cart.product.id)
+        THUMBNAIL = 2
+
+        carts = Cart.objects.filter(user_id=request.user)
+
+        for cart in carts:
+            sizestocks = cart.product.sizestock_set.filter(product_id=cart.product.id)
+
+            size_stocks = [
+                {
+                "size": sizestock.size.size if sizestock.size else "단품",
+                "stock": sizestock.stock.stock
+                } for sizestock in sizestocks
+            ]
 
         results = [
             {
-                "id"       : cart.product_id,
-                "img"      : cart.product.image_set.filter(image_type_id=2).first().image_url if cart.product.image_set.filter(image_type_id=2) else None,
-                "name"     : cart.product.name,
-                "price"    : cart.product.price,
-                "size"     : [(sizestock.size.size for sizestock in sizestocks) if sizestocks.size else "단품"],
-                "sale"     : cart.product.discount,
-                "stock"    : [sizestock.stock.stock for sizestock in sizestocks],
-                "isChecked": cart.check_box,
-                "cart_id"  : cart.id
+                "productId" : cart.product_id,
+                "img"       : cart.product.image_set.filter(image_type_id=THUMBNAIL).first().image_url if cart.product.image_set.filter(image_type_id=THUMBNAIL) else None,
+                "name"      : cart.product.name,
+                "price"     : cart.product.price,
+                "size_stock": size_stocks,
+                "count"     : cart.count,
+                "sale"      : cart.product.discount,
+                "isChecked" : cart.check_box,
+                "cartId"    : cart.id
             } for cart in carts
         ]
         return JsonResponse({"results": results}, status=200)
