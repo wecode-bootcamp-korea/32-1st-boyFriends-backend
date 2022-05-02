@@ -6,10 +6,10 @@ from django.conf  import settings
 
 def login_decorator(func) :
     def wrapper(self, request, *args, **kwrags) :
-        try :
+        try:
             token = request.headers.get('Authorization', None)
-            payload = jwt.decode(token, settings.SECRET_KEY, settings.ALGORITMS)
-            request.user = User.objects.get(email=payload['email'])
+            payload = jwt.decode(token, settings.SECRET_KEY, settings.ALGORITHM)
+            request.user = User.objects.get(id=payload['id'])
 
         except User.DoesNotExist:
             return JsonResponse({'MESSAGE' : 'INVALID_USER'}, status=401)
