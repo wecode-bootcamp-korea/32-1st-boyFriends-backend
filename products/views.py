@@ -102,14 +102,15 @@ class ReviewView(View):
     def patch(self, review_id):
         data    = json.loads(request.body)
         user_id = request.user
-        rating  = data.get("rating", None)
-        comment = data.get("comment", None)
 
-        if Review.objects.filter(id=review_id).exists():
-            review         = Review.objects.get(id=review_id, user_id=user_id)
-            review.rating  = rating
-            review.comment = comment
-            review.save()
+        existing_review = Review.objects.get(id=review_id, user_id=user_id)
+
+        rating  = data.get("rating", existing_review.rating)
+        comment = data.get("comment", existing_review.comment)
+
+        existing_review.rating  = rating
+        existing_review.comment = comment
+        existing_review.save()
         return JsonResponse({"message": "REVIEW_MODIFIED"}, status=205)
 
     def get(self, request, product_id):
