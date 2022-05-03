@@ -48,11 +48,12 @@ class ReviewView(View):
     @login_decorator
     def patch(self, request, review_id):
         data = json.loads(request.body)
+
         user_id = request.user
 
         existing_review = Review.objects.get(id=review_id, user_id=user_id)
 
-        rating = data.get("rating", existing_review.rating)
+        rating  = data.get("rating", existing_review.rating)
         comment = data.get("comment", existing_review.comment)
 
         existing_review.rating = rating
