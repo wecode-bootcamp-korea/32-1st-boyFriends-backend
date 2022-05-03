@@ -29,6 +29,7 @@ class Image(models.Model):
     product    = models.ForeignKey("Product", on_delete=models.CASCADE, null=True)
     image_type = models.ForeignKey("ImageType", on_delete=models.CASCADE)
     review     = models.ForeignKey("Review", on_delete=models.CASCADE ,null=True)
+    category   = models.ForeignKey("Category", on_delete=models.CASCADE, null=True)
 
     class Meta:
         db_table = "images"
