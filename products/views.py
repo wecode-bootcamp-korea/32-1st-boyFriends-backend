@@ -27,14 +27,7 @@ class ReviewView(View):
         return JsonResponse({"message": "REVIEW_CREATED"}, status=201)
 
     def get(self, request, review_id):
-        review          = Review.objects.get(id=review_id)
-        order_condition = request.GET.get("order", "recent")
-        offset          = int(request.GET.get("offset", 1))
-        limit           = int(request.GET.get("limit", 2))
-
-        end   = offset * limit
-        start = end - limit
-
+        review      = Review.objects.get(id=review_id)
         review_imgs = review.image_set.filter(review_id=review.id) if review.image_set.exists() else None
 
         results = [
@@ -45,21 +38,12 @@ class ReviewView(View):
                 "productSize"  : review.product.sizestock_set.get().size.size if review.product.sizestock_set.get().size else None,
                 "reviewContent": review.comment,
                 "reputation"   : review.rating,
-                "reivewImg"    : [{"url": review_img.image_urls} for review_img in review_imgs],
+                "reivewImg"    : [review_img.image_urls for review_img in review_imgs],
                 "created_at"   : review.created_at,
                 "updated_at"   : review.updated_at
             }
         ]
 
-        if order_condition == "recent":
-            results = sorted(results, key=lambda review: review["created_at"], reverse=True)
-
-        if order_condition == "high_rating":
-            results = sorted(results, key=lambda review: review["reputation"] if product["reputation"] else 0, reverse=True)
-        if order_condition == "low_rating":
-            results = sorted(results, key=lambda review: review["reputation"] if product["reputation"] else 0)
-
-        results = results[start:end]
         return JsonResponse({"results": results}, status=200)
 
     @login_decorator
