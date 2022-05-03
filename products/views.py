@@ -5,11 +5,13 @@ from django.views    import View
 
 from products.models import Product
 
-from core.utils      import login_decorator
-
+from core.utils      import (
+                         login_decorator,
+                         identification_decorator
+                     )
 
 class ProductDetailView(View):
-    @login_decorator
+    @identification_decorator
     def get(self, request, product_id):
         DETAIL = 1
 
@@ -35,6 +37,7 @@ class ProductDetailView(View):
                     } for size_stock in size_stocks
                 ],
                 "sale"  : product.discount,
+                "status": product.product_status,
                 "review": [
                     {
                         "id"           : review.id,
@@ -50,6 +53,7 @@ class ProductDetailView(View):
 
 
 class JustProductDetailView(View):
+    @identification_decorator
     def get(self, request, product_id):
         product = Product.objects.get(id=product_id)
         DETAIL  = 1
