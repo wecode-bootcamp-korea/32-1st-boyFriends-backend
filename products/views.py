@@ -43,7 +43,6 @@ class ReviewView(View):
                 "updated_at"   : review.updated_at
             }
         ]
-
         return JsonResponse({"results": results}, status=200)
 
     @login_decorator
