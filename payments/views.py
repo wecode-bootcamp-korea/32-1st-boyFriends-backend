@@ -5,7 +5,6 @@ from django.views    import View
 
 from products.models import Product
 from payments.models import Cart
-
 from core.utils      import login_decorator
 
 
@@ -17,11 +16,13 @@ class CartView(View):
         user_id    = request.user
         product_id = data["product_id"]
         count      = data["count"]
+        option     = data["size"]
 
         Cart.objects.create(
             user_id    = user_id,
             product_id = product_id,
-            count      = count
+            count      = count,
+            option     = option
         )
         return JsonResponse({"message": "CART_CREATED"}, status=201)
 
@@ -57,6 +58,26 @@ class CartView(View):
         return JsonResponse({"results": results}, status=200)
 
     @login_decorator
+    def patch(self, request):
+        data = json.loads(request.body)
+
+        cart_id = data["cart_id"]
+        user_id = request.user
+
+        existing_cart = Cart.objects.get(id=cart_id, user_id=user_id)
+
+        count     = data.get("count", existing_cart.count)
+        check_box = data.get("isChecked", existing_cart.check_box)
+        option    = data.get("option", existing_cart.option)
+
+        existing_cart.count     = count
+        existing_cart.check_box = check_box
+        existing_cart.option    = option
+
+        existing_cart.save()
+        return JsonResponse({"message": "COUNT_MODIFIED"}, status=205)
+
+    @login_decorator
     def delete(self, request):
         cart_ids = request.GET.getlist('cart_ids', None)
         user_id  = request.user
@@ -66,33 +87,3 @@ class CartView(View):
 
         Cart.objects.filter(id__in=cart_ids, user_id=user_id).delete()
         return JsonResponse({'message': 'CART_DELETED'}, status=204)
-
-
-class CartCountView(View):
-    @login_decorator
-    def patch(self, request):
-        data = json.loads(request.body)
-
-        cart_id = data["cart_id"]
-        user_id = request.user
-
-        existing_cart = Cart.objects.get(id=cart_id, user_id=user_id)
-
-        existing_cart.count = data["count"]
-        existing_cart.save()
-        return JsonResponse({"message": "COUNT_MODIFIED"}, status=205)
-
-
-class CartCheckBoxView(View):
-    @login_decorator
-    def patch(self, request):
-        data = json.loads(request.body)
-
-        cart_id = data["cart_id"]
-        user_id = request.user
-
-        existing_cart = Cart.objects.get(id=cart_id, user_id=user_id)
-
-        existing_cart.check_box = data["isChecked"]
-        existing_cart.save()
-        return JsonResponse({"message": "CHECK_MODIFIED"}, status=205)
