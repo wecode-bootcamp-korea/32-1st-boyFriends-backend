@@ -16,7 +16,7 @@ class CartView(View):
         user_id    = request.user
         product_id = data["product_id"]
         count      = data["count"]
-        option     = data["size"]
+        option     = data.get("size", None)
 
         Cart.objects.create(
             user_id    = user_id,
