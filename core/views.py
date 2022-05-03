@@ -13,11 +13,10 @@ class NavView(View):
                 "menuLink"   : main_category.id,
                 "sub" : [
                     {
-                        "subMenu": main_category.category_set.all()[i].id,
-                        "subMenuLink": main_category.category_set.all()[i].sub
+                        "subMenu": main_category.category_set.all()[i].sub,
+                        "subMenuLink": main_category.category_set.all()[i].id
                     } for i in range(len(main_category.category_set.all()))
                 ]
-
             } for main_category in main_categories
         ]
         return JsonResponse({"results": results}, status=200)
