@@ -26,3 +26,32 @@ def login_decorator(func) :
         return func(self, request, *args, **kwrags)
     
     return wrapper
+
+
+def identification_decorator(func):
+    def wrapper(self, request, *args, **kwrags):
+        try:
+            token = request.headers.get('Authorization', None)
+
+            if token:
+                payload = jwt.decode(token, settings.SECRET_KEY, settings.ALGORITHM)
+                request.user = User.objects.get(id=payload['id'])
+
+            else:
+                request.user = None
+
+        except User.DoesNotExist:
+            return JsonResponse({'MESSAGE': 'INVALID_USER'}, status=401)
+
+        except jwt.exceptions.DecodeError:
+            return JsonResponse({'MESSAGE': 'INVALID_TOKEN'}, status=401)
+
+        except jwt.ExpiredSignatureError:
+            return JsonResponse({'message': 'EXPIRED_TOKEN'}, status=401)
+
+        except jwt.InvalidSignatureError:
+            return JsonResponse({'message': 'invalid_signature'}, status=401)
+
+        return func(self, request, *args, **kwrags)
+
+    return wrapper
