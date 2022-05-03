@@ -8,6 +8,7 @@ from payments.models import Cart
 
 from core.utils      import login_decorator
 
+
 class CartView(View):
     @login_decorator
     def post(self, request):
@@ -65,3 +66,33 @@ class CartView(View):
 
         Cart.objects.filter(id__in=cart_ids, user_id=user_id).delete()
         return JsonResponse({'message': 'CART_DELETED'}, status=204)
+
+
+class CartCountView(View):
+    @login_decorator
+    def patch(self, request):
+        data = json.loads(request.body)
+
+        cart_id = data["cart_id"]
+        user_id = request.user
+
+        existing_cart = Cart.objects.get(id=cart_id, user_id=user_id)
+
+        existing_cart.count = data["count"]
+        existing_cart.save()
+        return JsonResponse({"message": "COUNT_MODIFIED"}, status=205)
+
+
+class CartCheckBoxView(View):
+    @login_decorator
+    def patch(self, request):
+        data = json.loads(request.body)
+
+        cart_id = data["cart_id"]
+        user_id = request.user
+
+        existing_cart = Cart.objects.get(id=cart_id, user_id=user_id)
+
+        existing_cart.check_box = data["isChecked"]
+        existing_cart.save()
+        return JsonResponse({"message": "CHECK_MODIFIED"}, status=205)
