@@ -22,7 +22,7 @@ class ProductsListView(View):
         main_category_id = request.GET.get("main_category_id", None)
         order_condition  = request.GET.get("order", "high_rating")
         search           = request.GET.get("search", None)
-        offset           = int(request.GET.get("offset", 1))
+        offset           = int(request.GET.get("offset", 0))
         limit            = int(request.GET.get("limit", 10))
 
         end   = offset * limit
