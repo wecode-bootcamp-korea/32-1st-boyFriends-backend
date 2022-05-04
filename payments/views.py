@@ -1,11 +1,10 @@
 import json
 
-from django.http     import JsonResponse
-from django.views    import View
+from django.http import JsonResponse
+from django.views import View
 
-from products.models import Product
 from payments.models import Cart
-from core.utils      import login_decorator
+from core.utils import login_decorator
 
 
 class CartView(View):
@@ -13,16 +12,23 @@ class CartView(View):
     def post(self, request):
         data = json.loads(request.body)
 
-        user_id    = request.user
+        user_id    = request.user.id
         product_id = data["product_id"]
         count      = data["count"]
         option     = data.get("size", None)
+
+        size = {
+            "S": 1,
+            "M": 2,
+            "L": 3,
+            "단품": 4
+        }
 
         Cart.objects.create(
             user_id    = user_id,
             product_id = product_id,
             count      = count,
-            option     = option
+            option_id  = size[option]
         )
         return JsonResponse({"message": "CART_CREATED"}, status=201)
 
@@ -30,29 +36,31 @@ class CartView(View):
     def get(self, request):
         THUMBNAIL = 2
 
-        carts = Cart.objects.filter(user_id=request.user)
+        carts = Cart.objects.filter(user_id=request.user.id)
 
         for cart in carts:
             sizestocks = cart.product.sizestock_set.filter(product_id=cart.product.id)
 
             size_stocks = [
                 {
-                "size": sizestock.size.size if sizestock.size else "단품",
-                "stock": sizestock.stock.stock
+                    "size" : sizestock.size.size,
+                    "stock": sizestock.stock.stock
                 } for sizestock in sizestocks
             ]
 
         results = [
             {
                 "productId" : cart.product_id,
-                "img"       : cart.product.image_set.filter(image_type_id=THUMBNAIL).first().image_url if cart.product.image_set.filter(image_type_id=THUMBNAIL) else None,
+                "img"       : cart.product.image_set.filter(image_type_id=THUMBNAIL).first().image_urls if cart.product.image_set.filter(image_type_id=THUMBNAIL) else None,
                 "name"      : cart.product.name,
                 "price"     : cart.product.price,
                 "size_stock": size_stocks,
+                "option"    : cart.option.size,
                 "count"     : cart.count,
                 "sale"      : cart.product.discount,
                 "isChecked" : cart.check_box,
-                "cartId"    : cart.id
+                "cartId"    : cart.id,
+
             } for cart in carts
         ]
         return JsonResponse({"results": results}, status=200)
@@ -62,7 +70,7 @@ class CartView(View):
         data = json.loads(request.body)
 
         cart_id = data["cart_id"]
-        user_id = request.user
+        user_id = request.user.id
 
         existing_cart = Cart.objects.get(id=cart_id, user_id=user_id)
 
@@ -80,10 +88,10 @@ class CartView(View):
     @login_decorator
     def delete(self, request):
         cart_ids = request.GET.getlist('cart_ids', None)
-        user_id  = request.user
+        user_id  = request.user.id
 
         if cart_ids is None:
-            return JsonResponse({'message': 'CART_EMPTY'}, status=404)
+            return JsonResponse({"message": "CART_EMPTY"}, status=404)
 
         Cart.objects.filter(id__in=cart_ids, user_id=user_id).delete()
-        return JsonResponse({'message': 'CART_DELETED'}, status=204)
+        return JsonResponse({"message": "CART_DELETED"}, status=204)
