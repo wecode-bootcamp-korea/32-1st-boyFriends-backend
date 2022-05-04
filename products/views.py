@@ -21,7 +21,7 @@ class ProductDetailView(View):
         results = [
             {
                 "id"       : product_id,
-                "itemTitle": product.category.sub,
+                "itemTitle": product.name,
                 "category" : product.category.main_category.main,
                 "userName" : request.user.name if request.user else None,
                 "img"      : [detail_img.image_urls for detail_img in detail_imgs],
