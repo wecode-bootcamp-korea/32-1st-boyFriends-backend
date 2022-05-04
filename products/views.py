@@ -14,8 +14,8 @@ class ProductDetailView(View):
         DETAIL = 1
 
         product     = Product.objects.get(id=product_id)
-        size_stocks = product.sizestock_set.filter(product_id=product_id)
-        reviews     = product.review_set.filter(product_id=product_id) if product.review_set.filter(product_id=product_id) else None
+        size_stocks = product.sizestock_set.filter()
+        reviews     = product.review_set.filter()
         detail_imgs = product.image_set.filter(image_type_id=DETAIL)
 
         results = [
@@ -29,7 +29,7 @@ class ProductDetailView(View):
                 "productOptioin": [
                     {
                         "id"      : size_stock.id,
-                        "size"    : size_stock.size.size if size_stock.size else None,
+                        "size"    : size_stock.size.size,
                         "stock"   : size_stock.stock.stock,
                         "category": product.category.main_category.main
                     } for size_stock in size_stocks
@@ -42,7 +42,7 @@ class ProductDetailView(View):
                         "reviewerName" : review.user.name,
                         "reviewContent": review.comment,
                         "reputation"   : review.rating,
-                        "reivewImg"    : review.image_set.first().image_urls if review.image_set.filter(review_id=review.id) else None
+                        "reivewImg"    : review.image_set.first().image_urls if review.image_set.filter() else None
                     } for review in reviews
                 ]
             }
@@ -74,12 +74,12 @@ class JustProductDetailView(View):
 class ProductOptionView(View):
     def get(self, request, product_id):
         product     = Product.objects.get(id=product_id)
-        size_stocks = product.sizestock_set.filter(product_id=product_id)
+        size_stocks = product.sizestock_set.filter()
 
         results = [
             {
                 "id"       : size_stock.id,
-                "size"     : size_stock.size.size if size_stock.size else None,
+                "size"     : size_stock.size.size,
                 "stock"    : size_stock.stock.stock,
                 "category" : product.category.main_category.main,
                 "itemTitle": product.category.sub
