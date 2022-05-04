@@ -13,17 +13,17 @@ def login_decorator(func):
             request.user = User.objects.get(id=payload['id'])
 
         except User.DoesNotExist:
-            return JsonResponse({'MESSAGE' : 'INVALID_USER'}, status=401)
+            return JsonResponse({'MESSAGE': 'INVALID_USER'}, status=401)
 
-        except jwt.exceptions.DecodeError :
+        except jwt.exceptions.DecodeError:
             return JsonResponse({'MESSAGE': 'INVALID_TOKEN'}, status=401)
         
-        except jwt.ExpiredSignatureError :
-            return JsonResponse({'message':'EXPIRED_TOKEN'}, status=401)
+        except jwt.ExpiredSignatureError:
+            return JsonResponse({'MESSAGE': 'EXPIRED_TOKEN'}, status=401)
 
         except jwt.InvalidSignatureError:
-            return JsonResponse({'message' : 'invalid_signature'}, status=401)
-        
+            return JsonResponse({'MESSAGE': 'INVALID_SIGNATURE'}, status=401)
+
         return func(self, request, *args, **kwrags)
     
     return wrapper
@@ -46,10 +46,10 @@ def identification_decorator(func):
             return JsonResponse({'MESSAGE': 'INVALID_TOKEN'}, status=401)
 
         except jwt.ExpiredSignatureError:
-            return JsonResponse({'message': 'EXPIRED_TOKEN'}, status=401)
+            return JsonResponse({'MESSAGE': 'EXPIRED_TOKEN'}, status=401)
 
         except jwt.InvalidSignatureError:
-            return JsonResponse({'message': 'invalid_signature'}, status=401)
+            return JsonResponse({'MESSAGE': 'INVALID_SIGNATURE'}, status=401)
 
         return func(self, request, *args, **kwrags)
 
