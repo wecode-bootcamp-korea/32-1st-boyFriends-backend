@@ -5,10 +5,8 @@ from django.views    import View
 
 from products.models import Product
 
-from core.utils      import (
-                         login_decorator,
-                         identification_decorator
-                     )
+from core.utils      import identification_decorator
+
 
 class ProductDetailView(View):
     @identification_decorator
