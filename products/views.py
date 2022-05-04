@@ -10,10 +10,10 @@ from core.utils      import login_decorator
 
 class ReviewView(View):
     @login_decorator
-    def post(self, reqeust):
-        data = json.loads(reqeust.body)
+    def post(self, request):
+        data = json.loads(request.body)
 
-        user_id    = reqeust.user
+        user_id    = request.user
         rating     = data["rating"]
         comment    = data["comment"]
         product_id = data["product_id"]
