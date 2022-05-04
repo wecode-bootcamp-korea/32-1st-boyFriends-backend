@@ -4,8 +4,9 @@ from users.models import User
 from django.http  import JsonResponse
 from django.conf  import settings
 
-def login_decorator(func) :
-    def wrapper(self, request, *args, **kwrags) :
+
+def login_decorator(func):
+    def wrapper(self, request, *args, **kwrags):
         try:
             token = request.headers.get('Authorization', None)
             payload = jwt.decode(token, settings.SECRET_KEY, settings.ALGORITHM)
@@ -31,14 +32,12 @@ def login_decorator(func) :
 def identification_decorator(func):
     def wrapper(self, request, *args, **kwrags):
         try:
-            token = request.headers.get('Authorization', None)
+            request.user = None
 
+            token = request.headers.get('Authorization', None)
             if token:
                 payload = jwt.decode(token, settings.SECRET_KEY, settings.ALGORITHM)
                 request.user = User.objects.get(id=payload['id'])
-
-            else:
-                request.user = None
 
         except User.DoesNotExist:
             return JsonResponse({'MESSAGE': 'INVALID_USER'}, status=401)
