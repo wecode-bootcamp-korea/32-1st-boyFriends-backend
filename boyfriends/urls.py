@@ -17,5 +17,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('users', include('users.urls')),
-    path('core', include('core.urls'))
+    path('core.view', MainCategoryView.as_view())
 ]

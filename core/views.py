@@ -4,7 +4,7 @@ from django.views    import View
 from products.models import MainCategory
 
 
-class NavView(View):
+class MainCategoryView(View):
     def get(self, request):
         main_categories = MainCategory.objects.all()
 
