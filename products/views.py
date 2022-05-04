@@ -13,7 +13,7 @@ class ReviewView(View):
     def post(self, request):
         data = json.loads(request.body)
 
-        user_id    = request.user
+        user_id    = request.user.id
         rating     = data["rating"]
         comment    = data["comment"]
         product_id = data["product_id"]
@@ -35,10 +35,9 @@ class ReviewView(View):
                 "id"           : review.id,
                 "reviewerName" : review.user.name,
                 "productId"    : review.product.id,
-                "productSize"  : review.product.sizestock_set.get().size.size if review.product.sizestock_set.get().size else None,
                 "reviewContent": review.comment,
                 "reputation"   : review.rating,
-                "reivewImg"    : [review_img.image_urls for review_img in review_imgs],
+                "reivewImgs"   : [review_img.image_urls for review_img in review_imgs],
                 "created_at"   : review.created_at,
                 "updated_at"   : review.updated_at
             }
@@ -49,14 +48,14 @@ class ReviewView(View):
     def patch(self, request, review_id):
         data = json.loads(request.body)
 
-        user_id = request.user
+        user_id = request.user.id
 
         existing_review = Review.objects.get(id=review_id, user_id=user_id)
 
         rating  = data.get("rating", existing_review.rating)
         comment = data.get("comment", existing_review.comment)
 
-        existing_review.rating = rating
+        existing_review.rating  = rating
         existing_review.comment = comment
         existing_review.save()
         return JsonResponse({"message": "REVIEW_MODIFIED"}, status=205)
@@ -64,7 +63,7 @@ class ReviewView(View):
     @login_decorator
     def delete(self, request):
         review_ids = request.GET.getlist("review_ids")
-        user_id    = request.user
+        user_id    = request.user.id
 
         Review.objects.filter(id__in=review_ids, user_id=user_id).delete()
         return JsonResponse({'message': 'REVIEW_DELETED'}, status=204)
