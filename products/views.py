@@ -35,7 +35,7 @@ class ProductDetailView(View):
                     } for size_stock in size_stocks
                 ],
                 "sale"  : product.discount,
-                "status": product.product_status,
+                "status": product.product_status.status if product.product_status else None,
                 "review": [
                     {
                         "id"           : review.id,
