@@ -9,11 +9,7 @@ from django.db.models import (
                           Count
                       )
 
-from products.models  import (
-                          Product,
-                          SizeStock,
-                          Category,
-                      )
+from products.models  import Product, SizeStock, Category
 
 
 class ProductsListView(View):
@@ -24,9 +20,6 @@ class ProductsListView(View):
         search           = request.GET.get("search", None)
         offset           = int(request.GET.get("offset", 0))
         limit            = int(request.GET.get("limit", 10))
-
-        end   = offset * limit
-        start = end - limit
 
         THUMBNAIL = 2
 
@@ -43,24 +36,20 @@ class ProductsListView(View):
         if category_id:
             q &= Q(category_id__id=category_id)
 
-        Product.objects.annotate(discount_price=Case(When(discount=True, then=F("price") * (100 - F("discount") / 100)), default=F("price")))
-
-        Product.objects.annotate(reviews=Count("review"))
-
-        Product.objects.annotate(best=Case(When(product_status__status="Best", then=True), default=False))
-
-        Product.objects.annotate(new=Case(When(product_status__status="New", then=True), default=False))
-
         order = {
-            "min_price"  : "discount_price",
-            "max_price"  : "-discount_price",
+            "min_price": "discount_price",
+            "max_price": "-discount_price",
             "high_rating": "-review__rating",
-            "reviews"    : "-reviews",
-            "best"       : "-best",
-            "new"        : "-new"
+            "reviews": "-reviews",
+            "best": "-best",
+            "new": "-new"
         }
 
-        products = Product.objects.filter(q).order_by(order[order_condition])[start:end]
+        products = Product.objects.annotate(discount_price=Case(When(discount=True, then=F("price") * (100 - F("discount") / 100)), default=F("price")))\
+            .annotate(reviews=Count("review"))\
+            .annotate(best=Case(When(product_status__status="Best", then=True), default=False))\
+            .annotate(new=Case(When(product_status__status="New", then=True), default=False)) \
+            .filter(q).order_by(order[order_condition])[offset:limit]
 
         results = [
             {
