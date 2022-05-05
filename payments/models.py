@@ -1,4 +1,3 @@
-from tkinter import CASCADE
 import uuid
 
 from django.db   import models
@@ -9,6 +8,7 @@ class Cart(TimeStampModel):
     product   = models.ForeignKey("products.Product", on_delete=models.CASCADE)
     count     = models.PositiveIntegerField()
     check_box = models.BooleanField(default=True)
+    option    = models.ForeignKey("products.Size", on_delete=models.CASCADE, null=True)
 
     class Meta:
         db_table = "carts"
