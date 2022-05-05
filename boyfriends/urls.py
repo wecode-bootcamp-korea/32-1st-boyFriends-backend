@@ -14,8 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
+from core.views  import MainCategoryView
 
 urlpatterns = [
     path('users', include('users.urls')),
-    path('payments', include('payments.urls'))
+    path('payments', include('payments.urls')),
+    path('navigation', MainCategoryView.as_view()),
 ]
