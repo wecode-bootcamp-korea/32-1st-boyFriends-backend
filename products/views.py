@@ -29,7 +29,10 @@ class ProductsListView(View):
         if search:
             q &= Q(name__icontains=search)\
                 | Q(category__sub__icontains=search)\
-                | Q(category__main_category__main__icontains=search)
+                | Q(category__main_category__main__icontains=search)\
+                | Q(product_status__status__icontains=search)\
+                | Q(caution__description__icontains=search)\
+                | Q(sizestock__size__size__exact=search)
             page_title = search + "에 대한 검색결과"
 
         if main_category_id:
@@ -46,7 +49,7 @@ class ProductsListView(View):
             "high_rating": "-total_rating",
             "reviews"    : "-reviews",
             "best"       : "-best",
-            "new"        : "-new"
+            "new"        : "-new",
         }
 
         products = Product.objects\
