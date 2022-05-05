@@ -16,8 +16,8 @@ Including another URLconf
 from django.urls import path, include
 from core.views  import MainCategoryView
 
-
 urlpatterns = [
     path('users', include('users.urls')),
+    path('payments', include('payments.urls')),
     path('navigation', MainCategoryView.as_view()),
 ]
