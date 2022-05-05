@@ -14,18 +14,18 @@ class CartView(View):
     def post(self, request):
         data = json.loads(request.body)
 
-        user_id = request.user.id
+        user_id    = request.user.id
         product_id = data["product_id"]
-        count = data["count"]
-        option = data.get("size", None)
+        count      = data["count"]
+        option     = data.get("size", None)
 
         size = Size.objects.get(size=option).id
 
         Cart.objects.create(
-            user_id=user_id,
+            user_id   =user_id,
             product_id=product_id,
-            count=count,
-            option_id=size
+            count     =count,
+            option_id =size
         )
         return JsonResponse({"message": "CART_CREATED"}, status=201)
 
