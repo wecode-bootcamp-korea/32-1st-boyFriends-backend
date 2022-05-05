@@ -1,10 +1,12 @@
 import json
 
-from django.http import JsonResponse
-from django.views import View
+from django.http     import JsonResponse
+from django.views    import View
 
 from payments.models import Cart
-from core.utils import login_decorator
+from products.models import Size
+
+from core.utils      import login_decorator
 
 
 class CartView(View):
@@ -12,23 +14,18 @@ class CartView(View):
     def post(self, request):
         data = json.loads(request.body)
 
-        user_id    = request.user.id
+        user_id = request.user.id
         product_id = data["product_id"]
-        count      = data["count"]
-        option     = data.get("size", None)
+        count = data["count"]
+        option = data.get("size", None)
 
-        size = {
-            "S": 1,
-            "M": 2,
-            "L": 3,
-            "단품": 4
-        }
+        size = Size.objects.get(size=option).id
 
         Cart.objects.create(
-            user_id    = user_id,
-            product_id = product_id,
-            count      = count,
-            option_id  = size[option]
+            user_id=user_id,
+            product_id=product_id,
+            count=count,
+            option_id=size
         )
         return JsonResponse({"message": "CART_CREATED"}, status=201)
 
