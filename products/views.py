@@ -48,7 +48,7 @@ class ProductsListView(View):
         }
 
         products = Product.objects\
-            .annotate(discount_price=(F("price") * ((100 - F("discount") / 100))))\
+            .annotate(discount_price=(F("price") * ((100 - F("discount")) / 100)))\
             .annotate(reviews=Count("review"))\
             .annotate(total_rating=Avg("review__rating"))\
             .annotate(best=Case(When(product_status__status="Best", then=True), default=False))\
@@ -67,7 +67,7 @@ class ProductsListView(View):
                     "name"          : product.name,
                     "price"         : product.price,
                     "discount"      : product.discount,
-                    "discount_price": ((product.price) * (100 - (product.discount))) // 100,
+                    "discount_price": product.discount_price,
                     "stock"         : sum([size_stock.stock.stock for size_stock in product.sizestock_set.filter()]),
                     "img"           : product.image_set.get(image_type_id=THUMBNAIL).image_urls if product.image_set.filter(image_type_id=THUMBNAIL) else None,
                     "reviewCount"   : product.reviews if product.reviews else None,
