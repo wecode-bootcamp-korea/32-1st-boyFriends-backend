@@ -27,8 +27,10 @@ class ProductsListView(View):
         page_title = "모든상품"
 
         if search:
-            q &= Q(name__icontains=search)
-            page_title = "검색결과"
+            q &= Q(name__icontains=search)\
+                | Q(category__sub__icontains=search)\
+                | Q(category__main_category__main__icontains=search)
+            page_title = search + "에 대한 검색결과"
 
         if main_category_id:
             q &= Q(category_id__main_category_id=main_category_id)
