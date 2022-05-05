@@ -48,7 +48,7 @@ class ProductsListView(View):
         }
 
         products = Product.objects\
-            .annotate(discount_price=(F("price") * ((100 - F("discount")) / 100)))\
+            .annotate(discount_price=(F("price") * (100 - F("discount"))) / 100) \
             .annotate(reviews=Count("review"))\
             .annotate(total_rating=Avg("review__rating"))\
             .annotate(best=Case(When(product_status__status="Best", then=True), default=False))\
